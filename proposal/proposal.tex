@@ -1,13 +1,20 @@
 \documentclass[12pt]{article}
 
 \usepackage{listings}
+\usepackage{titling}
 \usepackage[pdftex]{graphicx}
 \lstset{breaklines=true}
-%\lstset{numbers=left, numberstyle=\scriptsize\ttfamily, numbersep=10pt, captionpos=b} 
+%\lstset{numbers=left, numberstyle=\scriptsize\ttfamily, numbersep=10pt, captionpos=b}
 %\lstset{backgroundcolor=\color{gray-5}}
 \lstset{basicstyle=\small\ttfamily}
 \lstset{framesep=4pt}
 \newcommand{\inlineCode}{\lstinline[basicstyle=\normalsize\ttfamily]}
+\newcommand{\subtitle}[1]{%
+	\posttitle{%
+		\par\end{center}
+		\begin{center}\large#1\end{center}
+		\vskip0.5em}%
+}
 
 
 \pdfpagewidth 8.5in
@@ -25,6 +32,7 @@
 \setlength\topskip{0in}
 
 \title{CMSC727: Research Project Proposal}
+\subtitle{Comparing Relative Performances of Recurrent Jordan and Elman Neural Networks}
 \author{Kerry Cheng \and James Parker}
 
 \begin{document}
@@ -32,12 +40,30 @@
 
 \section{Proposal}
 
-For our project, we propose to implement a Jordan network in the new programming language called Julia. We will benchmark our implementation against data sets from the UCI Machine Learning Repository, including the character trajectories data set,
+For our project, we propose to implement Jordan and Elman neural networks and test their relative performances.
 
+We hypothesize that the Elman networks will perform better than the Jordan ones.
+While the output values are passed back in Jordan networks, the hidden values are passed back in Elman networks.
+Intuitively, it seems like this reduction of dimensionality in the Jordan networks must lose some information, thereby negatively impacting performance.
+
+The architecture will be a 2 layer recurrent network (1 hidden layer). The size of the layers will be determined by the data sets.
+As previously stated, in Elman networks the backward connections originate from the hidden layer.
+However, in Jordan networks the backward connections originate from the output layer.
+The learning method we will use in the networks will be the standard gradient descent algorithm.
+
+The architectures of these networks are similar, but with a significant difference. It would be interesting to examine the effects of this over diverse data sets.
+
+Both implmentations will be written in the new programming language called Julia.
+
+We will benchmark our implementation against data sets from the UCI Machine Learning Repository and the MATLAB Neural Network Toolbox. Some possible candidates include the character trajectories data set, 
 the Australian high quality sign language signs data set, 
+the URL reputation data set, 
+the individual household electric power consumption data set, 
+the pollution data set, 
+and the pH data set.
 
-URL Reputation Data Set,
-
-Individual household electric power consumption Data Set,
+We define performance as the mean squared error for function learning.
+For classification, performance is defined as estimated percent true error for the domain.
+In addition, we will examine the efficiency of the networks by measuring the number of epochs to convergence and run time.
 
 \end{document}
