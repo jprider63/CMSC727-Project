@@ -12,7 +12,7 @@ module JordanRNN
         end
     end
 
-    function JordanTrain(network::JordanNetwork, )
+    function JordanTrain!(network::JordanNetwork, )
 
     end
 
