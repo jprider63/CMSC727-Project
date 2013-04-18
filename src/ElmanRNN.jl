@@ -33,45 +33,40 @@ module ElmanRNN
 	end
 
 	# Train the network in place with the given inputs and targets.
-	function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets::Array{Float, 3})
+	function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets::TimeSeriesSamples)
 		# Check dimensions.
 		sizeContext = size( network.weightsHC, 1)
 		sizeInput = size( network.weightHI, 2)
 		sizeOutput = size( network.weightOH, 1)
 
-		sizeTraining = size( inputs, 3)
-		lengthInput = size( inputs, 1)
-		lengthTarget = size( targets, 1)
+		sizeTraining = size( inputs.samples, 1)
 
 		# Check that the number of inputs and targets are equal.
-		if sizeTraining != size( targets, 3)
+		if sizeTraining != size( targets.samples, 1)
 			error( "The number of inputs and targets must be equal!")
 		end
 
-		# Check that the size of each input is equal to the size of the input layer.
-		if sizeInput != lengthInput
+		# Check that the size of each input vector is equal to the size of the input layer.
+		if sizeInput != inputs.sizeSample
 			error( "The size of each input and the size input layer must be equal!")
 		end
 
-		# Check that the size of each target is equal to the size of the output layer.
-		if sizeOutput != lengthTarget
+		# Check that the size of each target vector is equal to the size of the output layer.
+		if sizeOutput != targets.sizeSample
 			error( "The size of each target and the size of the output layer must be equal!")
 		end
 		
-		# Initialize context layer to zero vector.
-		contextLayer = zeros( Float, sizeContext)
-
 		# Iterate over each epoch.
 		epoch = 0
 		error = Inf # TODO: or just compute?
 		while epoch < network.maxEpoch && error > network.errorThreshold
-			# TODO: reinitialize contextLayer here instead?
-
-
 			# Iterate over each training pair.
 			for i in 1:sizeTraining
+				# initialize contextLayer to zero vector
+				contextLayer = zeros( Float, sizeContext)
+
 				# Propogate input activation forward.
-				inputActivation = inputs[i,:]
+				inputActivation = inputs.samples[i,:]
 				targetActivation, hiddenActivation, error = ElmanEvaluateHelper( network, inputActivation, contextLayer)
 
 
