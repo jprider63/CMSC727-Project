@@ -3,7 +3,8 @@ module RNN
 export Float
 export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultActivationRule, logisticActivationRule
 
-if WORD_SIZE == 64
+#if WORD_SIZE == 64     # Float not generalized like Ints
+if true
     typealias Float Float64
 else
     typealias Float Float32

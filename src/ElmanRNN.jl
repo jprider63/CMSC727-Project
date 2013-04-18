@@ -33,7 +33,7 @@ module ElmanRNN
 	end
 
 	# Train the network in place with the given inputs and targets.
-	function ElmanTrain!( network::ElmanNetwork, inputs::Array{Float, 3}, targets::Array{Float, 3})
+	function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets::Array{Float, 3})
 		# Check dimensions.
 		sizeContext = size( network.weightsHC, 1)
 		sizeInput = size( network.weightHI, 2)
