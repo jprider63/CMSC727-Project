@@ -19,6 +19,7 @@ module ElmanRNN
 
 		# Functions
 		activationRule::RNN.ActivationRule # Activation rule.
+		errorFunction::Function
 
 		# functions (w/ constants like eta, mu included in closures) for error function, context, etc?
 
@@ -28,7 +29,7 @@ module ElmanRNN
 			wHC = rand( hiddenSize, hiddenSize) - .5
 			wOH = rand( outputSize, hiddenSize) - .5
 
-			new( wHI, wHC, wOH, RNN.defaultLearningRate, RNN.defaultMaxEpochs, RNN.defaultErrorThreshold)
+			new( wHI, wHC, wOH, defaultLearningRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule(), defaultErrorFunction())
 		end
 	end
 
@@ -61,18 +62,25 @@ module ElmanRNN
 		error = Inf # TODO: or just compute?
 		while epoch < network.maxEpoch && error > network.errorThreshold
 			# Iterate over each training pair.
-			for i in 1:sizeTraining
+			for p in 1:length(inputs.samples)
+				sample = inputs.samples[p]
+				target = targets.samples[p]
 				# initialize contextLayer to zero vector
 				contextLayer = zeros( Float, sizeContext)
+				for t in 1:length(sample)
+					# Propogate input activation forward.
+					inputActivation = sample[:,t]
+					targetT = target[:,t]
+					targetActivation, hiddenActivation = ElmanEvaluateHelper( network, inputActivation, contextLayer)
 
-				# Propogate input activation forward.
-				inputActivation = inputs.samples[i,:]
-				targetActivation, hiddenActivation, error = ElmanEvaluateHelper( network, inputActivation, contextLayer)
+					#TODO: EBP, update weights
+					deltaO = (targetT - aO) .* map(network.activationRule.activationDerivative, aO)
+					network.weightsOH += network.eta * (deltaO * aH')
+					deltaH = 0
 
+					#TODO: Copy output back into context nodes
 
-				#TODO: EBP, update weights
-
-
+					#TODO: Calculate mse
 			end
 
 			epoch = epoch + 1
@@ -87,10 +95,13 @@ module ElmanRNN
 	function ElmanEvaluateHelper( network::ElmanNetwork, input::Vector{Float}, contextLayer::Vector{Float})
 
 		# TODO: iterate input, get activations
+		inH = network.weightsHI * input + network.weightsHC * contextLayer
+		aH = map(network.activationRule.activationFunction, inH)
+		inO = network.weightsOH * aH
+		aO = map(network.activationRule.activationFunction, inO)
 
-
-		# Return the target activation, hidden activation, and error.
-
+		# Return the target activation, hidden activation.
+		aO, aH
 	end
 
 	# Evaluate the Elman RNN with the given input vector.
