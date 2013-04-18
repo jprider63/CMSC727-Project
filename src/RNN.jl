@@ -1,6 +1,13 @@
 module RNN
 
+export Float
 export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultActivationRule, logisticActivationRule
+
+if WORD_SIZE == 64
+    typealias Float Float64
+else
+    typealias Float Float32
+end
 
 type TimeSeriesSample
     sample::Matrix{Float}
