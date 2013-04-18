@@ -76,11 +76,16 @@ module ElmanRNN
 					#TODO: EBP, update weights
 					deltaO = (targetT - aO) .* map(network.activationRule.activationDerivative, aO)
 					network.weightsOH += network.eta * (deltaO * aH')
-					deltaH = 0
+
+					deltaH = network.weightsOH' * deltaO
+					network.weightsHI += network.eta * (deltaH * inputActivation')
+					network.weightsHC += network.eta * (deltaH * contextLayer')
 
 					#TODO: Copy output back into context nodes
+					contextLayer = network.mu * contextLayer + aO
 
 					#TODO: Calculate mse
+				end
 			end
 
 			epoch = epoch + 1
