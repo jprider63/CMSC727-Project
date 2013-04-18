@@ -35,7 +35,7 @@ immutable TimeSeriesSamples
 		end
 end
 
-type ActivationRule
+immutable ActivationRule
     activationFunction::Function
     activationDerivative::Function
 end
@@ -52,6 +52,19 @@ function logisticActivationRule(s)
     f(x) = 1/(1 + exp(-s * x))
     df(x) = s * x * (1 - x)
     ActivationRule(f, df)
+end
+
+function defaultErrorFunction()
+	meanSquaredError
+end
+
+function meanSquaredError( output::Vector{Float}, target::Vector{Float})
+	# Check that the two vectors of are equal lengths.
+	if length( output) != length( target)
+		error( "The length of the two vectors must be equal.")
+	end
+
+	sqrt( mapreduce(x->x^2, +, output - target))
 end
 
 end
