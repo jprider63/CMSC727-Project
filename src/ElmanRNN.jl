@@ -1,4 +1,5 @@
 module ElmanRNN
+using RNN
 
 export ElmanNetwork, ElmanTrain!, ElmanEvaluate
 
@@ -10,14 +11,14 @@ type ElmanNetwork
 	weightsOH::Matrix{Float} # Weights from hidden to output layer.
 
 	# Parameters
-	eta::Float # Learning rate. The default is .01.
+	eta::Float # Learning rate.
 
 	# Constants
-	maxEpochs::Uint # The maximum number of epochs. The default is typemax( Uint).
-	errorThreshold::Float # The error threshold to stop training at. The default is .0005.
+	maxEpochs::Uint # The maximum number of epochs.
+	errorThreshold::Float # The error threshold to stop training at.
 
 	# Functions
-	activationRule::Function # Activation rule. The default is the sigmoid activation rule. This function must take TODO...
+	activationRule::RNN.ActivationRule # Activation rule.
 
 	# functions (w/ constants like eta, mu included in closures) for error function, context, etc?
 
@@ -27,23 +28,23 @@ type ElmanNetwork
 		wHC = rand( hiddenSize, hiddenSize) - .5
 		wOH = rand( outputSize, hiddenSize) - .5
 
-		new( wHI, wHC, wOH, .01, typemax( Uint), .0005)
+		new( wHI, wHC, wOH, RNN.defaultLearningRate(), RNN.defaultMaxEpochs(), RNN.defaultErrorThreshold)
 	end
 end
 
 # Train the network in place with the given inputs and targets.
-function ElmanTrain!( network::ElmanNetwork, inputs::Matrix{Float}, targets::Matrix{Float})
+function ElmanTrain!( network::ElmanNetwork, inputs::Array{Float, 3}, targets::Array{Float, 3})
 	# Check dimensions.
 	sizeContext = size( network.weightsHC, 1)
 	sizeInput = size( network.weightHI, 2)
 	sizeOutput = size( network.weightOH, 1)
 
-	sizeTraining = size( inputs, 1)
-	lengthInput = size( inputs, 2)
-	lengthTarget = size( targets, 2)
+	sizeTraining = size( inputs, 3)
+	lengthInput = size( inputs, 1)
+	lengthTarget = size( targets, 1)
 
 	# Check that the number of inputs and targets are equal.
-	if sizeTraining != size( targets, 1)
+	if sizeTraining != size( targets, 3)
 		error( "The number of inputs and targets must be equal!")
 	end
 
@@ -63,7 +64,7 @@ function ElmanTrain!( network::ElmanNetwork, inputs::Matrix{Float}, targets::Mat
 	# Iterate over each epoch.
 	epoch = 0
 	error = Inf # TODO: or just compute?
-	while epoch < network.maxEpoch
+	while epoch < network.maxEpoch && error > network.errorThreshold
 		# TODO: reinitialize contextLayer here instead?
 
 
