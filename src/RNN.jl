@@ -10,12 +10,29 @@ else
     typealias Float Float32
 end
 
-type TimeSeriesSample
-    sample::Matrix{Float}
+immutable TimeSeriesSample
+    sample::Matrix{Float} # |Input or Output| x time Matrix
 end
 
-type TimeSeriesSamples
-    samples::Vector{TimeSeriesSample}
+immutable TimeSeriesSamples
+    samples::Vector{TimeSeriesSample} # Vector of samples.
+		sizeSample::Int # The |Input or Output| of each sample.
+
+		function TimeSeriesSamples( samples::Vector{TimeSeriesSample})
+			if length( samples) == 0
+				return new( samples, 0)
+			end
+
+			# Check that the sizes of each sample's Input or Output are equal.
+			sizeSample = size( samples[1], 1)
+			for sample in samples
+				if size( sample, 1) != sizeSample
+					error( "The sizes of each sample's Input or Output must be equal.")
+				end
+			end
+
+			new( samples, sizeSample)
+		end
 end
 
 type ActivationRule
