@@ -3,13 +3,6 @@ module RNN
 export Float
 export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultActivationRule, logisticActivationRule
 
-#if WORD_SIZE == 64	 # Float not generalized like Ints
-if true
-	typealias Float Float64
-else
-	typealias Float Float32
-end
-
 immutable TimeSeriesSample
 	sample::Matrix{Float} # |Input or Output| x time Matrix
 end

@@ -6,16 +6,16 @@ module ElmanRNN
 	# Define the structure of an Elman RNN.
 	type ElmanNetwork
 		# Weights between each layer.
-		weightsHI::Matrix{Float} # Weights from input to hidden layer.
-		weightsHC::Matrix{Float} # Weights from context to hidden layer.
-		weightsOH::Matrix{Float} # Weights from hidden to output layer.
+		weightsHI::Matrix{Float64} # Weights from input to hidden layer.
+		weightsHC::Matrix{Float64} # Weights from context to hidden layer.
+		weightsOH::Matrix{Float64} # Weights from hidden to output layer.
 
 		# Parameters
-		eta::Float # Learning rate.
+		eta::Float64 # Learning rate.
 
 		# Constants
 		maxEpochs::Uint # The maximum number of epochs.
-		errorThreshold::Float # The error threshold to stop training at.
+		errorThreshold::Float64 # The error threshold to stop training at.
 
 		# Functions
 		activationRule::RNN.ActivationRule # Activation rule.
@@ -66,7 +66,7 @@ module ElmanRNN
 				sample = inputs.samples[p]
 				target = targets.samples[p]
 				# initialize contextLayer to zero vector
-				contextLayer = zeros( Float, sizeContext)
+				contextLayer = zeros( Float64, sizeContext)
 				for t in 1:length(sample)
 					# Propogate input activation forward.
 					inputActivation = sample[:,t]
@@ -97,7 +97,7 @@ module ElmanRNN
 	end
 
 	# Helper function to ElmanEvaluate, which is used internally during training.
-	function ElmanEvaluateHelper( network::ElmanNetwork, input::Vector{Float}, contextLayer::Vector{Float})
+	function ElmanEvaluateHelper( network::ElmanNetwork, input::Vector{Float64}, contextLayer::Vector{Float})
 
 		# TODO: iterate input, get activations
 		inH = network.weightsHI * input + network.weightsHC * contextLayer
@@ -110,14 +110,14 @@ module ElmanRNN
 	end
 
 	# Evaluate the Elman RNN with the given input vector.
-	function ElmanEvaluate( network::ElmanNetwork, input::Vector{Float})
+	function ElmanEvaluate( network::ElmanNetwork, input::Vector{Float64})
 		# Check that the size of each input is equal to the size of the input layer.
 		if size( network.weightHI, 2) != size( input)
 			error( "The size of the input and the size input layer must be equal!")
 		end
 
 		# Initialize context layer to zero vector.
-		contextLayer = zeros( Float, sizeContext)
+		contextLayer = zeros( Float64, sizeContext)
 
 		# Evaluate the Elman RNN.
 		target, _, error = ElmanEvaluateHelper( network, input, contextLayer)
