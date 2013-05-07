@@ -1,12 +1,16 @@
 module RNN
 
-export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultActivationRule, logisticActivationRule, ErrorFunction
+export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultActivationRule, logisticActivationRule, ErrorFunction, importData
 
-immutable TimeSeriesSample
+# Current julia build on my machine doesn't support immutable (0.1.x)
+# immutable TimeSeriesSample
+type TimeSeriesSample
 	sample::Matrix{Float64} # |Input or Output| x time Matrix
 end
 
-immutable TimeSeriesSamples
+# Current julia build on my machine doesn't support immutable (0.1.x)
+# immutable TimeSeriesSamples
+type TimeSeriesSamples
 	samples::Vector{TimeSeriesSample} # Vector of samples.
 	sizeSample::Int # The |Input or Output| of each sample.
 
@@ -32,7 +36,9 @@ end
 # TODO: Once Julia supports it, enforce this type on the function.
 typealias ErrorFunction Function
 
-immutable ActivationRule
+# Current julia build on my machine doesn't support immutable (0.1.x)
+# immutable ActivationRule
+type ActivationRule
 	activationFunction::Function # TODO: Once Julia supports it, enforce the type on the function.
 	activationDerivative::Function # TODO: Once Julia supports it, enforce the type on the function.
 end
@@ -63,6 +69,29 @@ function L2NormError( output::Vector{Float64}, target::Vector{Float64})
 	end
 
 	sqrt( mapreduce(x->x^2, +, output - target))
+end
+
+# Imports a specified time series dataset
+# Other than the household power dataset, all are in same format
+function importData(datasetName)
+	filesep = "/"
+	if OS_NAME != ":Windows"
+		filesep = "\\"
+	end
+	testPath = pwd() * filesep * ".." * filesep * "test" * filesep
+
+	if datasetName == "household"
+		csvPath = testPath * "household_power_consumption.txt"
+		data = readdlm(csvPath, ';', Any)
+		# Strips non float values (1st and 2nd column)
+		data = data[:, 3:]
+	else
+		csvPath = testPath * datasetName * ".csv"
+		data = readcsv(csvPath)
+	end
+
+	data = data[2:, :]	# Strips column names (1st row)
+	return data
 end
 
 end
