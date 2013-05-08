@@ -1,6 +1,6 @@
 module RNN
 
-export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultActivationRule, logisticActivationRule, ErrorFunction, importData
+export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule, logisticActivationRule, ErrorFunction, defaultErrorFunction, importData
 
 # Current julia build on my machine doesn't support immutable (0.1.x)
 # immutable TimeSeriesSample
@@ -87,7 +87,7 @@ function importData(datasetName)
 		data = data[:, 3:]
 	else
 		csvPath = testPath * datasetName * ".csv"
-		data = readcsv(csvPath)
+		data = readcsv(csvPath, Float64)
 	end
 
 	data = data[2:, :]	# Strips column names (1st row)
