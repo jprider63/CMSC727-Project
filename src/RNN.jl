@@ -9,10 +9,10 @@ type TimeSeriesSample
 end
 
 # Helpful promoter function to import a Vector.
-TimeSeriesSample( sample::Vector{Float64})
+TimeSeriesSample( sample::Vector{Float64}) = begin
 	sampleMatrix = Array( length( sample), 1)
 	sampleMatrix[:,1] = sample[:]
-	new( sampleMatrix)
+	TimeSeriesSample( sampleMatrix)
 end
 
 # Current julia build on my machine doesn't support immutable (0.1.x)
