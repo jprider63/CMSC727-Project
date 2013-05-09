@@ -6,12 +6,12 @@ using JordanRNN
 
 srand(63)
 
-data = importData("ice")
-dataOutput = data[:,1]
-dataInput = zeros(length(dataOutput))
+data = importData("chickenpox")
+dataInput = data[:,1]
+dataOutput = map(x -> if (x >= mean(dataInput)) 1.0 else 0.0 end, dataInput)
 
-trainingIndices = 1:100
-testIndices = 101:219
+trainingIndices = 1:249
+testIndices = 250:498
 
 trainingInput = TimeSeriesSample( dataInput[trainingIndices])
 trainingInputs = TimeSeriesSamples( [trainingInput])
@@ -24,7 +24,7 @@ testOutput = TimeSeriesSample( dataOutput[testIndices])
 testOutputs = TimeSeriesSamples( [testOutput])
 
 net = JordanNetwork(1, 20, 1)
-net.mu = .1
+net.mu = 0
 net.eta = .3
 net.errorThreshold = .01
 numEpochs, lastTrainingError = JordanTrain!(net, trainingInputs, trainingOutputs)

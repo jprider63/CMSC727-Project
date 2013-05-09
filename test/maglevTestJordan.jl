@@ -6,12 +6,12 @@ using JordanRNN
 
 srand(63)
 
-data = importData("ice")
-dataOutput = data[:,1]
-dataInput = zeros(length(dataOutput))
+data = importData("maglev")
+dataInput = data[:,1]
+dataOutput = data[:,2]
 
-trainingIndices = 1:100
-testIndices = 101:219
+trainingIndices = 1:2000
+testIndices = 2001:4001
 
 trainingInput = TimeSeriesSample( dataInput[trainingIndices])
 trainingInputs = TimeSeriesSamples( [trainingInput])
@@ -23,7 +23,7 @@ testInputs = TimeSeriesSamples( [testInput])
 testOutput = TimeSeriesSample( dataOutput[testIndices])
 testOutputs = TimeSeriesSamples( [testOutput])
 
-net = JordanNetwork(1, 20, 1)
+net = JordanNetwork(1, 30, 1)
 net.mu = .1
 net.eta = .3
 net.errorThreshold = .01

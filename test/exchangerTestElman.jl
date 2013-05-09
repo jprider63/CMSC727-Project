@@ -23,9 +23,9 @@ testInputs = TimeSeriesSamples( [testInput])
 testOutput = TimeSeriesSample( dataOutput[testIndices])
 testOutputs = TimeSeriesSamples( [testOutput])
 
-net = ElmanNetwork(1, 10, 1)
+net = ElmanNetwork(1, 20, 1)
 net.mu = .1
-net.eta = .1
+net.eta = .3
 net.errorThreshold = .01
 numEpochs, lastTrainingError = ElmanTrain!(net, trainingInputs, trainingOutputs)
 
@@ -35,5 +35,5 @@ target = ElmanEvaluate( net, testInput)
 testError = norm(target - testOutput.sample)
 
 print("Num Epochs: $numEpochs\n")
-print("Last Training Error: $lastTrainingError")
-print("Testing Error: $testError")
+print("Last Training Error: $lastTrainingError\n")
+print("Testing Error: $testError\n")
