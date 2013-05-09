@@ -120,7 +120,7 @@ function JordanTrain!( network::JordanNetwork, inputs::TimeSeriesSamples, target
 	end
 
 	# Return the number of epochs and the error.
-	epoch, error
+	epoch, totalError
 end
 
 # Helper function to JordanEvaluate, which is used internally to feed forward.

@@ -26,12 +26,14 @@ testOutputs = TimeSeriesSamples( [testOutput])
 net = ElmanNetwork(1, 10, 1)
 net.mu = .3
 net.eta = .5
-net.errorThreshold = .001
+net.errorThreshold = .01
 ElmanTrain!(net, trainingInputs, trainingOutputs)
 
 #print(net)
 
 target = ElmanEvaluate( net, testInput)
+testError = norm(target - testoutput.sample)
 
-#print( target - testOutput.sample)
-print(norm(target - testOutput.sample))
+print("Num Epochs: $numEpochs\n")
+print("Last Training Error: $lastTrainingError")
+print("Testing Error: $testError")

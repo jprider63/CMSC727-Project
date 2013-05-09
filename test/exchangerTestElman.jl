@@ -1,17 +1,17 @@
 require("../src/RNN.jl")
-require("../src/JordanRNN.jl")
+require("../src/ElmanRNN.jl")
 require("helper.jl")
 using RNN
-using JordanRNN
+using ElmanRNN
 
 srand(63)
 
-data = importData("ice")
-dataOutput = data[:,1]
-dataInput = zeros(length(dataOutput))
+data = importData("exchanger")
+dataInput = data[:,1]
+dataOutput = data[:,2]
 
-trainingIndices = 1:100
-testIndices = 101:219
+trainingIndices = 1:2000
+testIndices = 2001:4000
 
 trainingInput = TimeSeriesSample( dataInput[trainingIndices])
 trainingInputs = TimeSeriesSamples( [trainingInput])
@@ -23,16 +23,16 @@ testInputs = TimeSeriesSamples( [testInput])
 testOutput = TimeSeriesSample( dataOutput[testIndices])
 testOutputs = TimeSeriesSamples( [testOutput])
 
-net = JordanNetwork(1, 10, 1)
-net.mu = .3
-net.eta = .5
+net = ElmanNetwork(1, 10, 1)
+net.mu = .1
+net.eta = .1
 net.errorThreshold = .01
-JordanTrain!(net, trainingInputs, trainingOutputs)
+numEpochs, lastTrainingError = ElmanTrain!(net, trainingInputs, trainingOutputs)
 
 #print(net)
 
-target = JordanEvaluate( net, testInput)
-testError = norm(target - testoutput.sample)
+target = ElmanEvaluate( net, testInput)
+testError = norm(target - testOutput.sample)
 
 print("Num Epochs: $numEpochs\n")
 print("Last Training Error: $lastTrainingError")
