@@ -23,6 +23,13 @@ type ElmanNetwork
 	activationRule::ActivationRule # Activation rule.
 	errorFunction::ErrorFunction # Error function.
 
+	# Scaling
+	inputScale::Vector{Float64}
+	inputShift::Vector{Float64}
+	targetScale::Vector{Float64}
+	targetShift::Vector{Float64}
+
+
 	# Initialize the network with random weights from [-.5.5).
 	function ElmanNetwork( inputSize::Int, hiddenSize::Int, outputSize::Int)
 		wHI = rand( hiddenSize, inputSize) - .5
@@ -30,7 +37,7 @@ type ElmanNetwork
 		wOH = rand( outputSize, hiddenSize) - .5
 		wHB = rand( hiddenSize) - .5
 
-		new( wHI, wHC, wOH, wHB, defaultLearningRate, defaultDecayRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule(), defaultErrorFunction())
+		new( wHI, wHC, wOH, wHB, defaultLearningRate, defaultDecayRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule(), defaultErrorFunction(), fill(1.0,inputSize), fill(0.0,inputSize), fill(1.0,inputSize), fill(0.0,inputSize))
 	end
 end
 
@@ -62,6 +69,10 @@ function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets:
 	if length( network.weightsHB) != size( network.weightsHC, 1)
 		Base.error( "The size of the bias vector and the size of the hidden layer must be equal!")
 	end
+
+	# Normalize input and target data.
+	inputs, network.inputScale, network.inputShift = normalize( inputs)
+	targets, network.targetScale, network.targetShift = normalize( targets)
 	
 	# Iterate over each epoch.
 	epoch = 0
@@ -110,7 +121,6 @@ end
 
 # Helper function to ElmanEvaluate, which is used internally to feed forward.
 function ElmanEvaluateHelper( network::ElmanNetwork, input::Vector{Float64}, contextLayer::Vector{Float64})
-
 	# Feed forward to compute the hidden and output activations.
 	inH = network.weightsHI * input + network.weightsHC * contextLayer + network.weightsHB
 	aH = map(network.activationRule.activationFunction, inH)
@@ -122,7 +132,7 @@ function ElmanEvaluateHelper( network::ElmanNetwork, input::Vector{Float64}, con
 end
 
 # Evaluate the Elman RNN with the given input vector.
-function ElmanEvaluate( network::ElmanNetwork, input::Vector{Float64})
+function ElmanEvaluate( network::ElmanNetwork, input::TimeSeriesSample)
 	# Check that the size of each input is equal to the size of the input layer.
 	if size( network.weightHI, 2) != size( input)
 		Base.error( "The size of the input and the size input layer must be equal!")

@@ -1,6 +1,6 @@
 module RNN
 
-export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultDecayRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule, logisticActivationRule, ErrorFunction, defaultErrorFunction, importData
+export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultDecayRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule, logisticActivationRule, ErrorFunction, defaultErrorFunction, importData, normalize
 
 # Current julia build on my machine doesn't support immutable (0.1.x)
 # immutable TimeSeriesSample
@@ -36,6 +36,34 @@ type TimeSeriesSamples
 
 		new( samples, sizeSample)
 	end
+end
+
+#
+function normalize( samples::TimeSeriesSamples)
+	maxx = fill( -Inf, samples.sizeSample)
+	shift = fill( Inf, samples.sizeSample)
+
+	for sample in samples.samples
+		for i in 1:samples.sizeSample
+			maxx[i] = max( maxx[i], max(sample.sample[i,:]))
+			shift[i] = min( shift[i], min(sample.sample[i,:]))
+		end
+	end
+
+	scale = maxx - shift
+
+	maxx += scale / 10
+	shift -= scale / 10
+	scale = maxx - shift
+	
+	newSamples = deepcopy( samples)
+	for sample in newSamples.samples
+		for i in 1:samples.sizeSample
+			sample.sample[i,:] = (sample.sample[i,:] - shift[i]) / scale[i]
+		end
+	end
+	
+	newSamples, scale, shift
 end
 
 # Define the type of error function. Both vectors must have equal lengths.
