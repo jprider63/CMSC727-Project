@@ -9,6 +9,7 @@ type ElmanNetwork
 	weightsHI::Matrix{Float64} # Weights from input to hidden layer.
 	weightsHC::Matrix{Float64} # Weights from context to hidden layer.
 	weightsOH::Matrix{Float64} # Weights from hidden to output layer.
+	weightsHB::Vector{Float64} # Weights from bias node to hidden layer.
 
 	# Parameters
 	eta::Float64 # Learning rate.
@@ -27,8 +28,9 @@ type ElmanNetwork
 		wHI = rand( hiddenSize, inputSize) - .5
 		wHC = rand( hiddenSize, hiddenSize) - .5
 		wOH = rand( outputSize, hiddenSize) - .5
+		wHB = rand( hiddenSize) - .5
 
-		new( wHI, wHC, wOH, defaultLearningRate, defaultDecayRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule(), defaultErrorFunction())
+		new( wHI, wHC, wOH, wHB, defaultLearningRate, defaultDecayRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule(), defaultErrorFunction())
 	end
 end
 
@@ -55,6 +57,11 @@ function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets:
 	if sizeOutput != targets.sizeSample
 		Base.error( "The size of each target and the size of the output layer must be equal!")
 	end
+
+	# Check that the size of the bias vector is equal to the size of the hidden layer.
+	if length( network.weightsHB) != size( network.weightsHC, 1)
+		Base.error( "The size of the bias vector and the size of the hidden layer must be equal!")
+	end
 	
 	# Iterate over each epoch.
 	epoch = 0
@@ -77,10 +84,11 @@ function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets:
 				deltaO = (targetT - aO) .* map(network.activationRule.activationDerivative, aO)
 				network.weightsOH += network.eta * (deltaO * aH')
 
-				# Back propagate input and context layers.
+				# Back propagate input layer, context layer, and bias vector.
 				deltaH = network.weightsOH' * deltaO
 				network.weightsHI += network.eta * (deltaH * inputActivation')
 				network.weightsHC += network.eta * (deltaH * contextLayer')
+				network.weightsHB += network.eta * deltaH
 
 				# Update context layer based on output activation.
 				contextLayer = network.mu * contextLayer + aH
@@ -103,8 +111,8 @@ end
 # Helper function to ElmanEvaluate, which is used internally to feed forward.
 function ElmanEvaluateHelper( network::ElmanNetwork, input::Vector{Float64}, contextLayer::Vector{Float64})
 
-	# TODO: iterate input, get activations
-	inH = network.weightsHI * input + network.weightsHC * contextLayer
+	# Feed forward to compute the hidden and output activations.
+	inH = network.weightsHI * input + network.weightsHC * contextLayer + network.weightsHB
 	aH = map(network.activationRule.activationFunction, inH)
 	inO = network.weightsOH * aH
 	aO = map(network.activationRule.activationFunction, inO)
@@ -125,6 +133,8 @@ function ElmanEvaluate( network::ElmanNetwork, input::Vector{Float64})
 
 	# Evaluate the Elman RNN.
 	target, _ = ElmanEvaluateHelper( network, input, contextLayer)
+
+	#TODO: Scale and shift...
 
 	# Return the target.
 	target
