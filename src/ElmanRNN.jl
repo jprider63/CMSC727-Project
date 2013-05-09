@@ -98,7 +98,7 @@ function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets:
 				network.weightsOH += network.eta * (deltaO * aH')
 
 				# Back propagate input layer, context layer, and bias vector.
-				deltaH = network.weightsOH' * deltaO
+				deltaH = network.weightsOH' * deltaO .* map(network.activationRule.activationDerivative, aH)
 				network.weightsHI += network.eta * (deltaH * inputActivation')
 				network.weightsHC += network.eta * (deltaH * contextLayer')
 				network.weightsHB += network.eta * deltaH
