@@ -29,8 +29,6 @@ net.eta = .3
 net.errorThreshold = .01
 numEpochs, lastTrainingError = ElmanTrain!(net, trainingInputs, trainingOutputs)
 
-#print(net)
-
 target = ElmanEvaluate( net, testInput)
 testError = norm(target - testOutput.sample)
 

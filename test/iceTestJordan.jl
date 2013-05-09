@@ -29,8 +29,6 @@ net.eta = .3
 net.errorThreshold = .01
 numEpochs, lastTrainingError = JordanTrain!(net, trainingInputs, trainingOutputs)
 
-#print(net)
-
 target = JordanEvaluate( net, testInput)
 testError = norm(target - testOutput.sample)
 
