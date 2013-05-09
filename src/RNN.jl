@@ -59,6 +59,9 @@ function normalize( samples::TimeSeriesSamples)
 	newSamples = deepcopy( samples)
 	for sample in newSamples.samples
 		for i in 1:samples.sizeSample
+			if maxx[i] == shift[i]
+				scale[i] = 1
+			end
 			sample.sample[i,:] = (sample.sample[i,:] - shift[i]) / scale[i]
 		end
 	end
