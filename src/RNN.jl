@@ -1,6 +1,6 @@
 module RNN
 
-export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule, logisticActivationRule, ErrorFunction, defaultErrorFunction, importData
+export TimeSeriesSample, TimeSeriesSamples, ActivationRule, defaultLearningRate, defaultDecayRate, defaultMaxEpochs, defaultErrorThreshold, defaultActivationRule, logisticActivationRule, ErrorFunction, defaultErrorFunction, importData
 
 # Current julia build on my machine doesn't support immutable (0.1.x)
 # immutable TimeSeriesSample
@@ -10,8 +10,8 @@ end
 
 # Helpful promoter function to import a Vector.
 TimeSeriesSample( sample::Vector{Float64}) = begin
-	sampleMatrix = Array( length( sample), 1)
-	sampleMatrix[:,1] = sample[:]
+	sampleMatrix = Array( Float64, 1, length( sample))
+	sampleMatrix[1,:] = sample[:]
 	TimeSeriesSample( sampleMatrix)
 end
 
@@ -27,9 +27,9 @@ type TimeSeriesSamples
 		end
 
 		# Check that the sizes of each sample's Input or Output are equal.
-		sizeSample = size( samples[1], 1)
+		sizeSample = size( samples[1].sample, 1)
 		for sample in samples
-			if size( sample, 1) != sizeSample
+			if size( sample.sample, 1) != sizeSample
 				error( "The sizes of each sample's Input or Output must be equal.")
 			end
 		end
@@ -51,6 +51,7 @@ type ActivationRule
 end
 
 const defaultLearningRate = .05
+const defaultDecayRate = .5
 const defaultMaxEpochs = typemax(Uint)
 const defaultErrorThreshold = .5
 
@@ -76,29 +77,6 @@ function L2NormError( output::Vector{Float64}, target::Vector{Float64})
 	end
 
 	sqrt( mapreduce(x->x^2, +, output - target))
-end
-
-# Imports a specified time series dataset
-# Other than the household power dataset, all are in same format
-function importData(datasetName)
-	filesep = "/"
-	if OS_NAME != ":Windows"
-		filesep = "\\"
-	end
-	testPath = pwd() * filesep * ".." * filesep * "test" * filesep
-
-	if datasetName == "household"
-		csvPath = testPath * "household_power_consumption.txt"
-		data = readdlm(csvPath, ';', Any)
-		# Strips non float values (1st and 2nd column)
-		data = data[:, 3:]
-	else
-		csvPath = testPath * datasetName * ".csv"
-		data = readcsv(csvPath, Float64)
-	end
-
-	data = data[2:, :]	# Strips column names (1st row)
-	return data
 end
 
 end
