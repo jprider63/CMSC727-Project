@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{multirow}
+
+\begin{document}
+\section{Discussion}
+\subsection{Elman vs. Jordan}
+\subsubsection{Time Series Prediction}
+It was clear from our data that Elman networks were more effective at predicting time series compared to Jordan networks.
+As such, we believe our hypothesis was correct.
+Throughout training, the Elman networks had consistently lower errors.
+Although most runs did not successfully converge within the maximum number of epochs, these errors still imply a difference between the two methods.
+Lower errors mean Elman networks at least got closer to convergence.
+
+As for testing error, Elman networks had either comparable values or far better ones.
+Looking at the exchanger data set, the difference is readily apparent.
+The errors are almost an order of magnitude lower.
+The only case in which Elman seemed to perform worse in testing was the maglev data set.
+However, this was also the only time a network converged within the error threshold before the maximum number of epochs.
+This seemed interesting, so the test was repeated with a lower threshold.
+Giving the Elman method as much time as the Jordan one, via this lower threshold, switched their ordering.
+The higher errors for Elman networks were caused by reaching the threshold too quickly.
+Elman nets performed better on every time series prediction test.
+
+\subsubsection{Classification}
+However, classification tests were another story.
+As before, training errors were far lower for Elman networks, but testing errors were actually the opposite.
+In every comparison, Jordan networks outperformed Elman ones.
+Unlike with time series prediction, Jordan networks seem superior in learning classification functions.
+This is interesting, but it is important to note our methodology in creating data sets for classification.
+Since we could not find any time series data sets which outputted a classification, we created one.
+However our simple examples are not recurrent in nature.
+The classifications could be determined solely with the current time step's inputs.
+Therefore, Jordan networks' advantage could only manifest in our specific types of examples.
+
+\subsection{Future Directions}
+This project focused on the relative performances and accuracy of Elman and Jordan recurrent networks.
+However, there are still other interesting related problems to be explored.
+
+Julia was used to implement these methods due to its potential speed and ease of use compared to other technical computing languages.
+In order to actually test this, analogous programs can be written in other currently popular languages and benchmarked against our Julia implementation.
+A detailed analysis could give insight into where Julia excels and where Julia still needs more work.
+
+Another possible future direction is a more comprehensive survey of recurrent neural networks.
+This project only implemented Elman and Jordan networks, but there are a multitude of other recurrent nets.
+Implementing more methods in the same manner and testing on a larger set of test cases might reveal currently unknown properties.
+Given the multitude of parameters and combinations of methods that can be examined, there is still an enormous space to be researched in the future.
+
+\end{document}
