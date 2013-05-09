@@ -1,8 +1,8 @@
 require("../src/RNN.jl")
-require("../src/JordanRNN.jl")
+require("../src/ElmanRNN.jl")
 require("helper.jl")
 using RNN
-using JordanRNN
+using ElmanRNN
 
 srand(63)
 
@@ -23,15 +23,15 @@ testInputs = TimeSeriesSamples( [testInput])
 testOutput = TimeSeriesSample( dataOutput[testIndices])
 testOutputs = TimeSeriesSamples( [testOutput])
 
-net = JordanNetwork(1, 10, 1)
+net = ElmanNetwork(1, 10, 1)
 net.mu = .3
 net.eta = .5
 net.errorThreshold = .001
-JordanTrain!(net, trainingInputs, trainingOutputs)
+ElmanTrain!(net, trainingInputs, trainingOutputs)
 
 #print(net)
 
-target = JordanEvaluate( net, testInput)
+target = ElmanEvaluate( net, testInput)
 
 #print( target - testOutput.sample)
 print(norm(target - testOutput.sample))
