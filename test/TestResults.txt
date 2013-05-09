@@ -81,7 +81,7 @@ Maglev (1 input, 1 output)
 			Last Training Error: 0.00999
 			Testing Error: 65.29465
 		mu = .1, eta = .3, numHidden = 30, errorThreshold = .01
-			Num Epochs: 146
+			Num Epochs: 80
 			Last Training Error: 0.00994
 			Testing Error: 68.57120
 		mu = .1, eta = .3, numHidden = 30, errorThreshold = .001

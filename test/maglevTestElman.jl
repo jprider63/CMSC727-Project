@@ -26,7 +26,7 @@ testOutputs = TimeSeriesSamples( [testOutput])
 net = ElmanNetwork(1, 30, 1)
 net.mu = .1
 net.eta = .3
-net.errorThreshold = .001
+net.errorThreshold = .01
 numEpochs, lastTrainingError = ElmanTrain!(net, trainingInputs, trainingOutputs)
 
 #print(net)
