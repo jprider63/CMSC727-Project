@@ -9,6 +9,9 @@
 \documentclass{acm_proc_article-sp}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{hyperref}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{framed}
 
 \newcommand{\todo}[1]{\textcolor{orange}{\textbf{TODO}: #1}} %~\\ 
 \newcommand{\unsure}[1]{\textcolor{Mulberry}{\textbf{?} #1 \textbf{?}}}
@@ -16,6 +19,8 @@
 \def\bs{\brainstorm}
 \newcommand{\wordchoice}[1]{\textcolor{red}{\textbf{#1}}}
 \def\wc{\wordchoice}
+
+\definecolor{shadecolor}{rgb}{0.95,0.95,0.95}
 
 \begin{document}
 
@@ -37,9 +42,16 @@
 \maketitle
 
 \begin{abstract}
-\todo{overview of entire paper, including results}
+Jordan and Elman recurrent neural networks are two different methods to learn and predict about time series data. 
+They both take similar approaches in that they both have context layers, but differ in how they update this layer. 
+In this paper, we set out to compare the difference in performance between these two types of networks. %We fill this void by 
+We accomplish this by implementing each network in the Julia language, and we test their errors on five different data sets. 
+
+
+\todo{We find that: including results...}
 \end{abstract}
 \section{Introduction} % problem, solution, your contribution, outline
+%\todo{mention supervised....}
 Jordan and Elman networks are two forms of recurrent neural networks that share very similar behavior and functionality. 
 They are both used to perform pattern recognition and time series forecasting given data over time. 
 Jordan networks were first introduced by Jordan with the novel approach that the output of a neural network could be copied back to a new context layer in the network \cite{jordan}. Then the network could learn the associated weights of this new context layer by standard back propagation. 
@@ -72,25 +84,70 @@ Since the language is new, there are a limited number of packages available. The
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=.8]{Images/jordan.pdf}
-\caption{The architecture of a Jordan network.}
-\label{fig:jordan}
-\end{center}
-\end{figure}
-
-\begin{figure}
-\begin{center}
 \includegraphics[scale=.8]{Images/elman.pdf}
 \caption{The architecture of an Elman network.}
 \label{fig:elman}
 \end{center}
 \end{figure}
 
-\section{Methods}
-\todo{network architecture - image, default use logistic/sigmoid activation, add a bias node to the input layer, discuss I/O data types?}
-\todo{nature and source of the training data - neural network }
-.. 
+\begin{figure}
+\begin{center}
+\includegraphics[scale=.8]{Images/jordan.pdf}
+\caption{The architecture of a Jordan network.}
+\label{fig:jordan}
+\end{center}
+\end{figure}
 
+\section{Methods}
+We implemented both Elman and Jordan recurrent neural networks in Julia. 
+Each network's architecture can be seen in Figures \ref{fig:elman} and \ref{fig:jordan}, respectively. 
+In the implementation, the networks are two layer in that they have one hidden layer. 
+The size of the input and output layers are determined by the data set, while the user can define a desired number of hidden nodes. 
+The size of the context layer is equal to either the size of the hidden layer or the output layer, depending on if the network is Elman or Jordan. 
+In the figures, regular connections between layers are indicated by solid arrows, while backwards, copyback connections are dashed. 
+The input layer also has a bias node whose activation is always one. 
+
+The default activation rule is the logistic, or sigmoid function, however the user can specify an arbitrary activation rule to use by giving it (and its derivative) to the network. 
+All of our comparison results used the logistic function for all layers of the network. 
+
+For the learning rules, we used standard error back propagation to update the weight matrices. To update the context layer, we copyback by decaying the current context layer by a parameter $\mu$ and add either the hidden or output layer. For instance, the general learning rules for the implemented Elman networks are shown below, where $\eta$ is the learning rate, $f$ is the activation rule, and $C(t)$ is the context layer at a given time.
+$$\Delta w_{ji} = \eta \delta_j a_i$$
+$$\delta_{Oj} = f'(in_j)(c_{j}-a_{Oj})$$
+$$\delta_{Hj} = f'(in_j) \sum_k w_{kj} \delta_k$$
+$$C(t)_{j} = \mu * C(t-1)_j + a_{Hj}$$
+
+The implementation also normalizes all of the input and output data to the interval $[0,1]$ during training. 
+This is needed so that the network can learn about output data outside the iterval $[0,1]$. 
+Normalizing the input also improves learning because then it is on a similar scale as the output. 
+
+\begin{table}
+\begin{center}
+  \begin{tabular}{| c | c |}
+  \hline
+  \textbf{Liquid flow rate} & \textbf{Liquid temperature}\\ \hline
+  0.3 & 98.628\\ \hline
+  0.29297 & 98.646\\ \hline
+  0.30356 & 98.638\\ \hline
+  0.30653 & 98.621\\ \hline
+  0.30216 & 98.614\\ \hline
+  \end{tabular}
+\end{center}  
+  \caption{Heat exchanger data set.}
+  \label{table:exchange}
+\end{table}
+
+To conduct our comparison of Elman and Jordan networks, we train each network on five different data sets. Each data set is split into training and test data, which allows us the record the network's perfomance in terms of the number of epochs, the training error, and the test error. Each epoch is one iteration through the sample training data. We measure error by taking the L2 norm.
+
+All of the data sets used are time varying and come from the Matlab Neural Network Toolbox Sample Data Sets \cite{data}. 
+There are three data sets that have continuous outputs. One is the heat exchanger data set, where the input is the liquid flow rate and the output is the liquid temperature. 
+To give an idea of the data, the first few data points are shown in Table \ref{table:exchange}, where time moves down in the table. 
+The next data set has outputs of the change in the world's total ice volume. % and no inputs. %Since there were no inputs, 
+The input of the third data set is the electromagnetic current of a maglev train, while the output is the train's position.
+
+We also analyzed two data sets with discrete, classification outputs. We could not find time varying, classification data sets so we created classifications out of the ones we were given. For instance, in the chicken pox data set, the number of cases of chicken pox per month in New York City is given. We then define an outbreak as true when the number of cases is above the average. This allowed us to treat the number of cases as the input, and whether there's an outbreak as the output. We use the same approach with the laser data set, which gives a laser's intensity over time. In this case, we classify a time step as either high or low intensity.
+
+%\todo{network architecture - image, default use logistic/sigmoid activation, add a bias node to the input layer, discuss I/O data types?}
+%\todo{nature and source of the training data - neural network }
 
 \section{Results}
 
@@ -101,5 +158,114 @@ Since the language is new, there are a limited number of packages available. The
 
 \bibliographystyle{plain}
 \bibliography{myrefs.bib}
+
+\appendix
+
+\section{Sample runs}
+
+\begin{listing}
+\begin{snugshade}
+\begin{verbatim}
+require("../src/RNN.jl")
+require("../src/ElmanRNN.jl")
+require("helper.jl")
+using RNN
+using ElmanRNN
+
+srand(63)
+
+data = importData("exchanger")
+dataInput = data[:,1]
+dataOutput = data[:,2]
+
+trainingIndices = 1:2000
+testIndices = 2001:4000
+
+trainingInput = TimeSeriesSample( 
+    dataInput[trainingIndices])
+trainingInputs = TimeSeriesSamples( 
+    [trainingInput])
+trainingOutput = TimeSeriesSample( 
+    dataOutput[trainingIndices])
+trainingOutputs = TimeSeriesSamples( 
+    [trainingOutput])
+
+testInput = TimeSeriesSample( 
+    dataInput[testIndices])
+testInputs = TimeSeriesSamples( [testInput])
+testOutput = TimeSeriesSample( 
+    dataOutput[testIndices])
+testOutputs = TimeSeriesSamples( [testOutput])
+
+net = ElmanNetwork(1, 20, 1)
+net.mu = .1
+net.eta = .3
+net.errorThreshold = .01
+numEpochs, lastTrainingError = ElmanTrain!(
+    net, trainingInputs, trainingOutputs)
+
+target = ElmanEvaluate( net, testInput)
+testError = norm(target - testOutput.sample)
+
+print("Num Epochs: $numEpochs\n")
+print("Last Training Error: $lastTrainingError\n")
+print("Testing Error: $testError\n")
+\end{verbatim}
+\end{snugshade}
+\caption{Sample Elman run with heat exchanger data set.}
+\label{code:exchangerElman}
+\end{listing}
+
+\begin{listing}
+\begin{snugshade}
+\begin{verbatim}
+require("../src/RNN.jl")
+require("../src/JordanRNN.jl")
+require("helper.jl")
+using RNN
+using JordanRNN
+
+srand(63)
+
+data = importData("exchanger")
+dataInput = data[:,1]
+dataOutput = data[:,2]
+
+trainingIndices = 1:2000
+testIndices = 2001:4000
+
+trainingInput = TimeSeriesSample( 
+    dataInput[trainingIndices])
+trainingInputs = TimeSeriesSamples( [trainingInput])
+trainingOutput = TimeSeriesSample( 
+    dataOutput[trainingIndices])
+trainingOutputs = TimeSeriesSamples( 
+    [trainingOutput])
+
+testInput = TimeSeriesSample( 
+    dataInput[testIndices])
+testInputs = TimeSeriesSamples( [testInput])
+testOutput = TimeSeriesSample( 
+    dataOutput[testIndices])
+testOutputs = TimeSeriesSamples( [testOutput])
+
+net = JordanNetwork(1, 20, 1)
+net.mu = .1
+net.eta = .3
+net.errorThreshold = .01
+numEpochs, lastTrainingError = JordanTrain!( net, 
+    trainingInputs, trainingOutputs)
+
+target = JordanEvaluate( net, testInput)
+testError = norm(target - testOutput.sample)
+
+print("Num Epochs: $numEpochs\n")
+print("Last Training Error: $lastTrainingError\n")
+print("Testing Error: $testError\n")
+\end{verbatim}
+\end{snugshade}
+\caption{Sample Jordan run with heat exchanger data set.}
+\label{code:exchangerJordan}
+\end{listing}
 
 \end{document}
