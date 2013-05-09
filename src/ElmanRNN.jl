@@ -76,8 +76,10 @@ function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets:
 	
 	# Iterate over each epoch.
 	epoch = 0
-	error = Inf
-	while epoch < network.maxEpochs && error > network.errorThreshold
+	totalError = Inf
+	while epoch < network.maxEpochs && totalError > network.errorThreshold
+		epochErrors = Array( Float64, length(inputs.samples))
+
 		# Iterate over each training pair.
 		for p in 1:length(inputs.samples)
 			error = 0 # As long as there are more than 1 time steps this should be fine. TODO: Do we need to check this?
@@ -109,9 +111,11 @@ function ElmanTrain!( network::ElmanNetwork, inputs::TimeSeriesSamples, targets:
 			end
 
 			# Compute the average error by dividing by the number of time steps.
-			error = error / length(sample)
+			epochErrors[p] = error / length(sample)
 		end
 
+		totalError = network.errorFunction( epochErrors, zeros( length(inputs.samples)))
+		print( string( totalError)*"\n")
 		epoch = epoch + 1
 	end
 
@@ -134,17 +138,32 @@ end
 # Evaluate the Elman RNN with the given input vector.
 function ElmanEvaluate( network::ElmanNetwork, input::TimeSeriesSample)
 	# Check that the size of each input is equal to the size of the input layer.
-	if size( network.weightHI, 2) != size( input)
+	if size( network.weightsHI, 2) != size( input.sample, 1)
 		Base.error( "The size of the input and the size input layer must be equal!")
 	end
 
+	# Normalize input.
+	input = deepcopy( input)
+	for i in 1:size( input.sample, 1)
+		input.sample[i,:] = (input.sample[i,:] - network.inputShift[i]) / network.inputScale[i]
+	end
+
 	# Initialize context layer to zero vector.
-	contextLayer = zeros( Float64, sizeContext)
+	contextLayer = zeros( Float64, size( network.weightsHI, 1))
 
 	# Evaluate the Elman RNN.
-	target, _ = ElmanEvaluateHelper( network, input, contextLayer)
+	target = Array( Float64, size( network.weightsOH, 1), size( input.sample, 2))
+	for i in 1:size( input.sample, 2)
+		target[:,i], aH = ElmanEvaluateHelper( network, input.sample[:,i], contextLayer)
 
-	#TODO: Scale and shift...
+		# Update context layer based on output activation.
+		contextLayer = network.mu * contextLayer + aH
+	end
+
+	# Scale and shift back.
+	for i in 1:length( network.targetScale)
+		target[i,:] = target[i,:] * network.targetScale[i] + network.targetShift[i]
+	end
 
 	# Return the target.
 	target

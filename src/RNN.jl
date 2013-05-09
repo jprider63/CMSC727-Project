@@ -62,7 +62,7 @@ function normalize( samples::TimeSeriesSamples)
 			sample.sample[i,:] = (sample.sample[i,:] - shift[i]) / scale[i]
 		end
 	end
-	
+
 	newSamples, scale, shift
 end
 
@@ -81,7 +81,7 @@ end
 const defaultLearningRate = .05
 const defaultDecayRate = .5
 const defaultMaxEpochs = typemax(Uint)
-const defaultErrorThreshold = .5
+const defaultErrorThreshold = .04
 
 function defaultActivationRule()
 	logisticActivationRule(1)
