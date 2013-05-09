@@ -81,10 +81,10 @@ type ActivationRule
 	activationDerivative::Function # TODO: Once Julia supports it, enforce the type on the function.
 end
 
-const defaultLearningRate = .05
-const defaultDecayRate = .5
-const defaultMaxEpochs = typemax(Uint)
-const defaultErrorThreshold = .04
+const defaultLearningRate = .2
+const defaultDecayRate = .3
+const defaultMaxEpochs = 5000
+const defaultErrorThreshold = .05
 
 function defaultActivationRule()
 	logisticActivationRule(1)

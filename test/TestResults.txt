@@ -1,0 +1,153 @@
+Exchanger (1 input, 1 output)
+	Elman
+		mu = .1, eta = .1, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.02591
+			Testing Error: 18.62037
+		mu = .3, eta = .1, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.02270
+			Testing Error: 21.73420
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.02138
+			Testing Error: 27.69586
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.01939
+			Testing Error: 24.62165
+	Jordan
+		mu = .1, eta = .1, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.04231
+			Testing Error: 64.19846
+		mu = .3, eta = .1, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.04551
+			Testing Error: 80.20247
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.04616
+			Testing Error: 120.87661
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.04270
+			Testing Error: 135.60854
+
+Ice (0 inputs, 1 output)
+	Elman
+		mu = .3, eta = .5, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.10252
+			Testing Error: 12.45976
+		mu = .1, eta = .5, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.09848
+			Testing Error: 12.75804
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.12102
+			Testing Error: 11.92459
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.09366
+			Testing Error: 13.13796
+	Jordan
+		mu = .3, eta = .5, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.13473
+			Testing Error: 13.65836
+		mu = .1, eta = .5, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.14861
+			Testing Error: 11.44808
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.16781
+			Testing Error: 11.26288
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.12934
+			Testing Error: 14.52611
+
+Maglev (1 input, 1 output)
+	Elman
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.01731
+			Testing Error: 61.55067
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 146
+			Last Training Error: 0.00999
+			Testing Error: 65.29465
+		mu = .1, eta = .3, numHidden = 30, errorThreshold = .01
+			Num Epochs: 146
+			Last Training Error: 0.00994
+			Testing Error: 68.57120
+		mu = .1, eta = .3, numHidden = 30, errorThreshold = .001
+			Num Epochs: 5000
+			Last Training Error: 0.00509
+			Testing Error: 60.43116
+	Jordan
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.02495
+			Testing Error: 67.65677
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.01638
+			Testing Error: 65.38774
+		mu = .1, eta = .3, numHidden = 30, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.01045
+			Testing Error: 64.22677
+
+Chickenpox (1 input, 1 ouput)
+Originally just 1 ouput, but created classification data (greater or less than average)
+	Elman
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.04758
+			Testing Error: 3.76940
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.03121
+			Testing Error: 3.30458
+		mu = 0, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.03466
+			Testing Error: 3.37411
+	Jordan
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.05300
+			Testing Error: 2.47227
+		mu = .1, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.08092
+			Testing Error: 2.19778
+		mu = 0, eta = .3, numHidden = 20, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.08059
+			Testing Error: 2.21680
+
+Laser (1 input, 1 ouput)
+Originally just 1 ouput, but created classification data (greater or less than average)
+	Elman
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.08570
+			Testing Error: 8.51078
+		mu = 0, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.08566
+			Testing Error: 8.76133
+	Jordan
+		mu = .1, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.08453
+			Testing Error: 7.26211
+		mu = 0, eta = .3, numHidden = 10, errorThreshold = .01
+			Num Epochs: 5000
+			Last Training Error: 0.08439
+			Testing Error: 7.25134
