@@ -77,9 +77,9 @@ Our hypothesis is that Elman networks should have higher performance than Jordan
 We also decided to implement these networks in Julia because it is a relatively new language that shows much potential for technical computing. 
 For instance, it has features such as a rich type system and a JIT compiler \cite{julia}. 
 Stronger types can help a programmer write more correct and less buggy code. 
-The JIT compiler also offers huge speed improvements over interpretted languages like Matlab and R. 
+The JIT compiler also offers huge speed improvements over interpreted languages like Matlab and R. 
 For instance, quicksort in Julia is 105.09 times faster than Matlab's quicksort and is 517.34 times faster than R's quicksort. 
-This is possible because instructions are compiled to machine operations instead of being evaluated within another language's interpretter.
+This is possible because instructions are compiled to machine operations instead of being evaluated within another language's interpreter.
 Since the language is new, there are a limited number of packages available. Therefore our implementations may actually make an impact and be included as a standard Julia package. 
 
 \begin{figure}
@@ -117,7 +117,7 @@ $$\delta_{Hj} = f'(in_j) \sum_k w_{kj} \delta_k$$
 $$C(t)_{j} = \mu * C(t-1)_j + a_{Hj}$$
 
 The implementation also normalizes all of the input and output data to the interval $[0,1]$ during training. 
-This is needed so that the network can learn about output data outside the iterval $[0,1]$. 
+This is needed so that the network can learn about output data outside the interval $[0,1]$. 
 Normalizing the input also improves learning because then it is on a similar scale as the output. 
 
 \begin{table}
@@ -136,7 +136,7 @@ Normalizing the input also improves learning because then it is on a similar sca
   \label{table:exchange}
 \end{table}
 
-To conduct our comparison of Elman and Jordan networks, we train each network on five different data sets. Each data set is split into training and test data, which allows us the record the network's perfomance in terms of the number of epochs, the training error, and the test error. Each epoch is one iteration through the sample training data. We measure error by taking the L2 norm.
+To conduct our comparison of Elman and Jordan networks, we train each network on five different data sets. Each data set is split into training and test data, which allows us the record the network's performance in terms of the number of epochs, the training error, and the test error. Each epoch is one iteration through the sample training data. We measure error by taking the L2 norm.
 
 All of the data sets used are time varying and come from the Matlab Neural Network Toolbox Sample Data Sets \cite{data}. 
 There are three data sets that have continuous outputs. One is the heat exchanger data set, where the input is the liquid flow rate and the output is the liquid temperature. 
@@ -150,6 +150,17 @@ We also analyzed two data sets with discrete, classification outputs. We could n
 %\todo{nature and source of the training data - neural network }
 
 \section{Results}
+Here we provide the raw data from our experiments for each data set. Results from the heat exchanger data set is shown in Table \ref{table:exchangeresults}. Ice data set results are in Table \ref{table:iceresults}. The maglev data set results can be found in Table \ref{table:maglevresults}. The results from the chickenpox data is displayed in Table \ref{table:poxresults}. The laser intensity results are seen in Table \ref{table:laserresults}. Each of these tables shows the number of epochs it took to train, the training error, and the test error for both the Elman and Jordan network. The tables also show multiple results given for different training parameters, such as the learning rate, the decay rate, and the number of hidden nodes. 
+
+To help visualize what is happening during training, we graph the training error versus the current epoch for one training example. Figure \ref{fig:error} shows this information which comes from training both the Elman and Jordan networks on the exchanger data set. 
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=.5\textwidth]{Images/error.pdf}
+\caption{L2 error per epoch during training of exchanger data set.}
+\label{fig:error}
+\end{center}
+\end{figure}
 
 \begin{table}
 \begin{center}
